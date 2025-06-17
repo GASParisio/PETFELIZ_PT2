@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦉Acessar</title>
+<!-- CSS DO BOOTSTRAP-->
+<link rel="stylesheet" href="css/estilo.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+<!--CSS DO ICONE DO BOOTSTRAP-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body class="bg-white">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-4">
+        <div class="card shadow border-success">
+          <div class="card-body">
+            <h2 class="text-center bg-success text-white p-2">Login</h2>
+            <form id="login-form">
+              <div class="my-2">
+                <label for="email" class="form-label text-success">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Informe o seu email" autofocus />
+              </div>
+              <div class="my-2">
+                <label for="senha" class="form-label text-success">Senha</label>
+                <input type="password" class="form-control" id="senha" placeholder="Informe a sua senha" />
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-success my-2">
+                  <i class="bi bi-box-arrow-in-right"></i> Entrar
+                </button>
+                <button type="reset" class="btn btn-outline-success">
+                  <i class="bi bi-x-circle-fill"></i> Limpar
+                </button>
+              </div>
+            </form>
+            <hr />
+            <div class="text-center">
+              <a href="novousuario.html" class="btn btn-success">Ainda não é usuário?</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+    <!-- JAVASCRIPT DO BOOTSTRAP-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script> 
+    <!-- INTEGRAÇÃO COM O SUPBASE -->   
+     <script type="module">
+        import {createClient} from 'http://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm' 
+        const urlSupabase = 'https://ogcijlfdronizkitcfed.supabase.co' //cole a informação do Supabase
+        const anon = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nY2lqbGZkcm9uaXpraXRjZmVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1NzE4NjEsImV4cCI6MjA2MjE0Nzg2MX0.42HhcbYUcKwTvHLBAhflYUl0H6oQQsg7mGo80U5M0Hc' // chave anonima
+        const supabase = createClient(urlSupabase, anon) 
+
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault() // evita recarregar o formulario
+            //alert('voce clicou!') usado para testar o botão "Enviar"
+            const {data, error} = await supabase.auth.signInWithPassword({email: email.value, password: senha.value})
+            if(error) {//Deu erro no login?
+                alert('Erro no login: ' + error.message)
+            }else {//Vamos salvar os dados da sessao e direcionar para o menu
+                localStorage.setItem('session', JSON.stringify(data.session))
+                window.location.href='menu.html'
+            }
+        }) 
+     </script> 
+</body>
+</html>
