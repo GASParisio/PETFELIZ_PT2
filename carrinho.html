@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pet Feliz - Carrinho</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <!-- NAVBAR UNIFICADA -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand text-white" href="#">🦉Pet Feliz</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- Itens do menu original -->
+                   <li class="nav-item">
+                        <a class="nav-link text-white" href="index.html"><i class="bi bi-house"></i> Início</a>
+                    </li>
+                   <!-- <li class="nav-item">
+                        <a class="nav-link text-white" href="financeiro.html"><i class="bi bi-cash-coin"></i> Adquira seu Produto/Serviço</a>
+                    </li> -->
+
+                    <!-- Itens do menu adicional -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="index1.html"><i class="bi bi-box-arrow-in-right"></i> Acessar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="sobre.html"><i class="bi bi-question-circle"></i> Sobre</a>
+                    </li>
+                     <li class="nav-item">
+                     <a class="nav-link text-white" href="carrinho.html"><i class="bi bi-cart"></i> Carrinho</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="contato.html"><i class="bi bi-telephone-fill"></i> Contato</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="sac.html"><i class="bi bi-megaphone"></i> SAC</a>
+                    </li>
+                </ul>
+
+                <!-- Botão sair alinhado à direita -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+  <div class="container py-5">
+    <h2 class="text-success">Carrinho de compras</h2>
+    <div class="card shadow">
+      <div class="card-body">
+        <form id="form-lancamento">
+          <input type="hidden" id="id-edicao" />
+          <div class="mb-3">
+            <label for="categoria" class="form-label text-success">Categoria</label>
+            <select id="categoria" class="form-select" required>
+              <option value="">Selecione...</option>
+              <option value="Ração para cachorro">🐕 Para cachorro</option>
+              <option value="Ração para gatos">😺 Para gatos</option>
+              <option value="Cuidado Pet">🐶💝 Cuidado Pet</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="valor" class="form-label text-success">Produto</label>
+            <select id="valor" class="form-select" required>
+              <option value="">Selecione um produto ou serviço</option>
+              <option value="racao_gato">Ração para Gato</option>
+              <option value="racao_cachorro">Ração para Cachorro</option>
+              <option value="banho_tosa">Banho e Tosa</option>
+              <option value="passeio_pet">Passeio Pet</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="tamanhoPet" class="form-label text-success">Tamanho do Pet</label>
+            <select id="tamanhoPet" class="form-select">
+              <option value="1">1 - até 3kg R$150</option>
+              <option value="2">2 - 4 a 9kg R$300</option>
+              <option value="3">3 - acima de 9kg R$500</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="data_ocorrencia" class="form-label text-success">Data do Pedido</label>
+            <input type="date" id="data_ocorrencia" class="form-control" required />
+          </div>
+
+          <button type="submit" class="btn btn-success">Salvar</button>
+          <button type="button" id="cancelar-edicao" class="btn btn-outline-success d-none">Cancelar Edição</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="mt-5">
+      <h4 class="text-success">Pedidos Realizados</h4>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Tamanho</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-pedidos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://ogcijlfdronizkitcfed.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nY2lqbGZkcm9uaXpraXRjZmVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1NzE4NjEsImV4cCI6MjA2MjE0Nzg2MX0.42HhcbYUcKwTvHLBAhflYUl0H6oQQsg7mGo80U5M0Hc'
+    )
+
+    const session = JSON.parse(localStorage.getItem('session'))
+    if (!session) window.location.href = 'index.html'
+
+    const user_id = session.user.id
+
+    document.getElementById('data_ocorrencia').value = new Date().toISOString().split('T')[0]
+
+    document.getElementById('form-lancamento').addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const id = document.getElementById('id-edicao').value
+      const novo = {
+        user_id,
+        produto: valor.value,
+        tamanho_pet: tamanhoPet.value,
+        valor: parseFloat(tamanhoPet.value === '1' ? 150 : tamanhoPet.value === '2' ? 300 : 500),
+        data_pedido: data_ocorrencia.value
+      }
+
+      if (id) {
+        await supabase.from('lancamentos1').update(novo).eq('id', id)
+      } else {
+        await supabase.from('lancamentos1').insert(novo)
+      }
+
+      limparFormularioLancamento()
+      carregarLancamentos()
+    })
+
+    document.getElementById('cancelar-edicao').addEventListener('click', () => {
+      limparFormularioLancamento()
+    })
+
+    function limparFormularioLancamento() {
+      document.getElementById('form-lancamento').reset()
+      document.getElementById('id-edicao').value = ''
+      document.getElementById('data_ocorrencia').value = new Date().toISOString().split('T')[0]
+      document.getElementById('cancelar-edicao').classList.add('d-none')
+    }
+
+    async function carregarLancamentos() {
+      const { data } = await supabase.from('lancamentos1').select('*').eq('user_id', user_id)
+      const tbody = document.getElementById('tbody-pedidos')
+      tbody.innerHTML = ''
+      data.forEach((item) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.produto}</td>
+            <td>${item.tamanho_pet}</td>
+            <td>R$ ${item.valor.toFixed(2)}</td>
+            <td>${item.data_pedido}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" onclick="editarLancamento('${item.id}')">✏️</button>
+              <button class="btn btn-sm btn-danger" onclick="excluirLancamento('${item.id}')">🗑️</button>
+            </td>
+          </tr>`
+      })
+    }
+
+    // Expondo funções para que o onclick funcione no HTML
+    window.editarLancamento = async (id) => {
+      const { data } = await supabase.from('lancamentos1').select('*').eq('id', id).single()
+      document.getElementById('id-edicao').value = data.id
+      document.getElementById('valor').value = data.produto
+      document.getElementById('tamanhoPet').value = data.tamanho_pet
+      document.getElementById('data_ocorrencia').value = data.data_pedido
+      document.getElementById('cancelar-edicao').classList.remove('d-none')
+    }
+
+    window.excluirLancamento = async (id) => {
+      if (confirm('Deseja excluir este pedido?')) {
+        await supabase.from('lancamentos1').delete().eq('id', id)
+        carregarLancamentos()
+      }
+    }
+
+    carregarLancamentos()
+  </script>
+</body>
+</html>
